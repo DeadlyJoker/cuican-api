@@ -26,6 +26,22 @@ func GetTopUpInfo(c *gin.Context) {
 	// 获取支付方式
 	payMethods := operation_setting.PayMethods
 
+	// 如果支付方式为空，使用默认的支付宝和微信支付配置
+	if len(payMethods) == 0 {
+		payMethods = []map[string]string{
+			{
+				"name":  "支付宝",
+				"type":  "alipay",
+				"color": "rgba(var(--semi-blue-5), 1)",
+			},
+			{
+				"name":  "微信",
+				"type":  "wxpay",
+				"color": "rgba(var(--semi-green-5), 1)",
+			},
+		}
+	}
+
 	// 如果启用了 Stripe 支付，添加到支付方法列表
 	if setting.StripeApiSecret != "" && setting.StripeWebhookSecret != "" && setting.StripePriceId != "" {
 		// 检查是否已经包含 Stripe
@@ -85,6 +101,72 @@ func GetEpayClient() *epay.Client {
 		return nil
 	}
 	return withUrl
+}
+
+// TestPaymentConfig 测试支付配置
+func TestPaymentConfig(c *gin.Context) {
+	result := gin.H{
+		"epay_configured": false,
+		"epay_client_ok":  false,
+		"pay_methods":     []string{},
+		"errors":          []string{},
+		"warnings":        []string{},
+	}
+
+	// 检查易支付配置
+	if operation_setting.PayAddress == "" {
+		result["errors"] = append(result["errors"].([]string), "支付地址（PayAddress）未配置")
+	} else if operation_setting.EpayId == "" {
+		result["errors"] = append(result["errors"].([]string), "易支付商户ID（EpayId）未配置")
+	} else if operation_setting.EpayKey == "" {
+		result["errors"] = append(result["errors"].([]string), "易支付商户密钥（EpayKey）未配置")
+	} else {
+		result["epay_configured"] = true
+		// 测试易支付客户端连接
+		client := GetEpayClient()
+		if client != nil {
+			result["epay_client_ok"] = true
+		} else {
+			result["errors"] = append(result["errors"].([]string), "无法创建易支付客户端，请检查配置是否正确")
+		}
+	}
+
+	// 检查支付方式配置
+	payMethods := operation_setting.PayMethods
+	if len(payMethods) == 0 {
+		result["warnings"] = append(result["warnings"].([]string), "未配置支付方式，将使用默认配置（支付宝+微信）")
+		payMethods = []map[string]string{
+			{"name": "支付宝", "type": "alipay"},
+			{"name": "微信", "type": "wxpay"},
+		}
+	}
+
+	// 收集支付方式类型
+	methodTypes := []string{}
+	for _, method := range payMethods {
+		if methodType, ok := method["type"]; ok {
+			methodTypes = append(methodTypes, methodType)
+		}
+	}
+	result["pay_methods"] = methodTypes
+
+	// 检查回调地址
+	callBackAddress := service.GetCallbackAddress()
+	if callBackAddress == "" {
+		result["warnings"] = append(result["warnings"].([]string), "回调地址未配置，将使用服务器地址")
+	}
+
+	// 检查是否启用了在线充值
+	if result["epay_configured"].(bool) && result["epay_client_ok"].(bool) {
+		result["online_topup_enabled"] = true
+	} else {
+		result["online_topup_enabled"] = false
+		if len(result["errors"].([]string)) == 0 {
+			result["errors"] = append(result["errors"].([]string), "在线充值未启用，请完成易支付配置")
+		}
+	}
+
+	common.ApiSuccess(c, result)
 }
 
 func getPayMoney(amount int64, group string) float64 {

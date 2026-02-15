@@ -339,87 +339,92 @@ const renderOperations = (
     showError(t('聊天链接配置错误，请联系管理员'));
   }
 
-  return (
-    <Space wrap>
-      <SplitButtonGroup
-        className='overflow-hidden'
-        aria-label={t('项目操作按钮组')}
-      >
-        <Button
-          size='small'
-          type='tertiary'
-          onClick={() => {
-            if (chatsArray.length === 0) {
-              showError(t('请联系管理员配置聊天链接'));
-            } else {
-              const first = chatsArray[0];
-              onOpenLink(first.name, first.value, record);
-            }
-          }}
-        >
-          {t('聊天')}
-        </Button>
-        <Dropdown trigger='click' position='bottomRight' menu={chatsArray}>
-          <Button
-            type='tertiary'
-            icon={<IconTreeTriangleDown />}
-            size='small'
-          ></Button>
-        </Dropdown>
-      </SplitButtonGroup>
-
-      {record.status === 1 ? (
-        <Button
-          type='danger'
-          size='small'
-          onClick={async () => {
+  // Build menu items
+  const menuItems = [
+    {
+      node: 'item',
+      name: t('编辑'),
+      onClick: () => {
+        setEditingToken(record);
+        setShowEdit(true);
+      },
+    },
+    {
+      node: 'divider',
+    },
+    record.status === 1
+      ? {
+          node: 'item',
+          name: t('禁用'),
+          onClick: async () => {
             await manageToken(record.id, 'disable', record);
             await refresh();
-          }}
-        >
-          {t('禁用')}
-        </Button>
-      ) : (
-        <Button
-          size='small'
-          onClick={async () => {
+          },
+        }
+      : {
+          node: 'item',
+          name: t('启用'),
+          onClick: async () => {
             await manageToken(record.id, 'enable', record);
             await refresh();
-          }}
+          },
+        },
+    {
+      node: 'divider',
+    },
+    {
+      node: 'item',
+      name: t('删除'),
+      type: 'danger',
+      onClick: () => {
+        Modal.confirm({
+          title: t('确定是否要删除此令牌？'),
+          content: t('此修改将不可逆'),
+          onOk: () => {
+            (async () => {
+              await manageToken(record.id, 'delete', record);
+              await refresh();
+            })();
+          },
+        });
+      },
+    },
+  ].filter(Boolean);
+
+  return (
+    <Space wrap>
+      {chatsArray.length > 0 ? (
+        <SplitButtonGroup
+          className='overflow-hidden'
+          aria-label={t('项目操作按钮组')}
         >
-          {t('启用')}
+          <Button
+            size='small'
+            type='tertiary'
+            onClick={() => {
+              const first = chatsArray[0];
+              onOpenLink(first.name, first.value, record);
+            }}
+          >
+            {t('聊天')}
+          </Button>
+          {chatsArray.length > 1 && (
+            <Dropdown trigger='click' position='bottomRight' menu={chatsArray}>
+              <Button
+                type='tertiary'
+                icon={<IconTreeTriangleDown />}
+                size='small'
+              ></Button>
+            </Dropdown>
+          )}
+        </SplitButtonGroup>
+      ) : null}
+
+      <Dropdown trigger='click' position='bottomRight' menu={menuItems}>
+        <Button type='tertiary' size='small' icon={<IconTreeTriangleDown />}>
+          {t('更多')}
         </Button>
-      )}
-
-      <Button
-        type='tertiary'
-        size='small'
-        onClick={() => {
-          setEditingToken(record);
-          setShowEdit(true);
-        }}
-      >
-        {t('编辑')}
-      </Button>
-
-      <Button
-        type='danger'
-        size='small'
-        onClick={() => {
-          Modal.confirm({
-            title: t('确定是否要删除此令牌？'),
-            content: t('此修改将不可逆'),
-            onOk: () => {
-              (async () => {
-                await manageToken(record.id, 'delete', record);
-                await refresh();
-              })();
-            },
-          });
-        }}
-      >
-        {t('删除')}
-      </Button>
+      </Dropdown>
     </Space>
   );
 };

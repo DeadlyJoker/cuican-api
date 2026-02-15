@@ -30,9 +30,9 @@ const Navigation = ({
 }) => {
   const renderNavLinks = () => {
     const baseClasses =
-      'flex-shrink-0 flex items-center gap-1 font-semibold rounded-md transition-all duration-200 ease-in-out';
-    const hoverClasses = 'hover:text-semi-color-primary';
-    const spacingClasses = isMobile ? 'p-1' : 'p-2';
+      'flex-shrink-0 flex items-center gap-1 font-semibold rounded-lg transition-all duration-300 ease-out relative nav-link';
+    const hoverClasses = 'hover:text-semi-color-primary hover:bg-semi-color-fill-0';
+    const spacingClasses = isMobile ? 'px-3 py-1.5' : 'px-4 py-2';
 
     const commonLinkClasses = `${baseClasses} ${spacingClasses} ${hoverClasses}`;
 

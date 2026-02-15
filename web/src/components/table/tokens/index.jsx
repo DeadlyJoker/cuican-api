@@ -378,7 +378,6 @@ function TokensPage() {
               selectedKeys={selectedKeys}
               setEditingToken={setEditingToken}
               setShowEdit={setShowEdit}
-              batchCopyTokens={batchCopyTokens}
               batchDeleteTokens={batchDeleteTokens}
               copyText={copyText}
               t={t}

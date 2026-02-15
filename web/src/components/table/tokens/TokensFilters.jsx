@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { Form, Button } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
 
@@ -31,14 +31,54 @@ const TokensFilters = ({
 }) => {
   // Handle form reset and immediate search
   const formApiRef = useRef(null);
+  const debounceTimerRef = useRef(null);
 
+  // Debounced search function
+  const debouncedSearch = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      searchTokens();
+    }, 500); // 500ms debounce
+  }, [searchTokens]);
+
+  // Handle form reset and immediate search
   const handleReset = () => {
     if (!formApiRef.current) return;
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
     formApiRef.current.reset();
     setTimeout(() => {
       searchTokens();
     }, 100);
   };
+
+  // Handle input change with debounce
+  const handleInputChange = () => {
+    debouncedSearch();
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      searchTokens();
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Form
@@ -51,7 +91,6 @@ const TokensFilters = ({
       allowEmpty={true}
       autoComplete='off'
       layout='horizontal'
-      trigger='change'
       stopValidateWithError={false}
       className='w-full md:w-auto order-1 md:order-2'
     >
@@ -64,6 +103,8 @@ const TokensFilters = ({
             showClear
             pure
             size='small'
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
         </div>
 
@@ -75,6 +116,8 @@ const TokensFilters = ({
             showClear
             pure
             size='small'
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
         </div>
 

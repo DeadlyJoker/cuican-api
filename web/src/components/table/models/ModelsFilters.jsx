@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { Form, Button } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
 
@@ -31,14 +31,53 @@ const ModelsFilters = ({
 }) => {
   // Handle form reset and immediate search
   const formApiRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      searchModels();
+    }, 500); // 500ms debounce
+  }, [searchModels]);
 
   const handleReset = () => {
     if (!formApiRef.current) return;
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
     formApiRef.current.reset();
     setTimeout(() => {
       searchModels();
     }, 100);
   };
+
+  // Handle input change with debounce
+  const handleInputChange = () => {
+    debouncedSearch();
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      searchModels();
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Form
@@ -64,6 +103,8 @@ const ModelsFilters = ({
             showClear
             pure
             size='small'
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
         </div>
 
@@ -75,6 +116,8 @@ const ModelsFilters = ({
             showClear
             pure
             size='small'
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
         </div>
 

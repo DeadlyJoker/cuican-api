@@ -25,7 +25,9 @@ import {
   Typography,
   Modal,
   Tooltip,
+  Dropdown,
 } from '@douyinfe/semi-ui';
+import { IconMore } from '@douyinfe/semi-icons';
 import {
   timestamp2string,
   getLobeHubIcon,
@@ -184,25 +186,40 @@ const renderOperations = (
   refresh,
   t,
 ) => {
+  // Create dropdown menu items
+  const moreMenuItems = [
+    {
+      node: 'item',
+      name: record.status === 1 ? t('禁用') : t('启用'),
+      type: record.status === 1 ? 'warning' : 'secondary',
+      onClick: () => {
+        manageModel(record.id, record.status === 1 ? 'disable' : 'enable', record);
+      },
+    },
+    {
+      node: 'divider',
+    },
+    {
+      node: 'item',
+      name: t('删除'),
+      type: 'danger',
+      onClick: () => {
+        Modal.confirm({
+          title: t('确定是否要删除此模型？'),
+          content: t('此修改将不可逆'),
+          onOk: () => {
+            (async () => {
+              await manageModel(record.id, 'delete', record);
+              await refresh();
+            })();
+          },
+        });
+      },
+    },
+  ];
+
   return (
     <Space wrap>
-      {record.status === 1 ? (
-        <Button
-          type='danger'
-          size='small'
-          onClick={() => manageModel(record.id, 'disable', record)}
-        >
-          {t('禁用')}
-        </Button>
-      ) : (
-        <Button
-          size='small'
-          onClick={() => manageModel(record.id, 'enable', record)}
-        >
-          {t('启用')}
-        </Button>
-      )}
-
       <Button
         type='tertiary'
         size='small'
@@ -213,25 +230,9 @@ const renderOperations = (
       >
         {t('编辑')}
       </Button>
-
-      <Button
-        type='danger'
-        size='small'
-        onClick={() => {
-          Modal.confirm({
-            title: t('确定是否要删除此模型？'),
-            content: t('此修改将不可逆'),
-            onOk: () => {
-              (async () => {
-                await manageModel(record.id, 'delete', record);
-                await refresh();
-              })();
-            },
-          });
-        }}
-      >
-        {t('删除')}
-      </Button>
+      <Dropdown menu={moreMenuItems} trigger='click' position='bottomRight'>
+        <Button type='tertiary' size='small' icon={<IconMore />} />
+      </Dropdown>
     </Space>
   );
 };

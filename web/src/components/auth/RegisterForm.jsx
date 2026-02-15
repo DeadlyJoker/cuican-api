@@ -127,6 +127,23 @@ const RegisterForm = () => {
     }
   }, [statusState?.status]);
 
+  // 检查是否有任何 OAuth 选项可用
+  const hasOAuthOptions = useMemo(() => {
+    return !!(
+      status.github_oauth ||
+      status.discord_oauth ||
+      status.oidc_enabled ||
+      status.wechat_login ||
+      status.linuxdo_oauth ||
+      status.telegram_oauth
+    );
+  }, [status]);
+
+  // 决定显示哪个表单
+  const shouldShowEmailForm = useMemo(() => {
+    return showEmailRegister || !hasOAuthOptions;
+  }, [showEmailRegister, hasOAuthOptions]);
+
   const [showEmailVerification, setShowEmailVerification] = useState(false);
 
   useEffect(() => {
@@ -388,7 +405,7 @@ const RegisterForm = () => {
                 {status.wechat_login && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={
                       <Icon svg={<WeChatIcon />} style={{ color: '#07C160' }} />
@@ -396,28 +413,28 @@ const RegisterForm = () => {
                     onClick={onWeChatLoginClicked}
                     loading={wechatLoading}
                   >
-                    <span className='ml-3'>{t('使用 微信 继续')}</span>
+                    <span className='ml-2'>{t('使用 微信 继续')}</span>
                   </Button>
                 )}
 
                 {status.github_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={<IconGithubLogo size='large' />}
                     onClick={handleGitHubClick}
                     loading={githubLoading}
                     disabled={githubButtonDisabled}
                   >
-                    <span className='ml-3'>{githubButtonText}</span>
+                    <span className='ml-2'>{githubButtonText}</span>
                   </Button>
                 )}
 
                 {status.discord_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={
                       <SiDiscord
@@ -431,27 +448,27 @@ const RegisterForm = () => {
                     onClick={handleDiscordClick}
                     loading={discordLoading}
                   >
-                    <span className='ml-3'>{t('使用 Discord 继续')}</span>
+                    <span className='ml-2'>{t('使用 Discord 继续')}</span>
                   </Button>
                 )}
 
                 {status.oidc_enabled && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={<OIDCIcon style={{ color: '#1877F2' }} />}
                     onClick={handleOIDCClick}
                     loading={oidcLoading}
                   >
-                    <span className='ml-3'>{t('使用 OIDC 继续')}</span>
+                    <span className='ml-2'>{t('使用 OIDC 继续')}</span>
                   </Button>
                 )}
 
                 {status.linuxdo_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={
                       <LinuxDoIcon
@@ -465,7 +482,7 @@ const RegisterForm = () => {
                     onClick={handleLinuxDOClick}
                     loading={linuxdoLoading}
                   >
-                    <span className='ml-3'>{t('使用 LinuxDO 继续')}</span>
+                    <span className='ml-2'>{t('使用 LinuxDO 继续')}</span>
                   </Button>
                 )}
 
@@ -485,12 +502,12 @@ const RegisterForm = () => {
                 <Button
                   theme='solid'
                   type='primary'
-                  className='w-full h-12 flex items-center justify-center bg-black text-white !rounded-full hover:bg-gray-800 transition-colors'
+                  className='w-full h-12 flex items-center justify-center bg-black text-white !rounded-lg hover:bg-gray-800 hover:shadow-md transition-all font-medium'
                   icon={<IconMail size='large' />}
                   onClick={handleEmailRegisterClick}
                   loading={emailRegisterLoading}
                 >
-                  <span className='ml-3'>{t('使用 用户名 注册')}</span>
+                  <span className='ml-2'>{t('使用 用户名 注册')}</span>
                 </Button>
               </div>
 
@@ -530,7 +547,7 @@ const RegisterForm = () => {
               </Title>
             </div>
             <div className='px-2 py-8'>
-              <Form className='space-y-3'>
+              <Form className='space-y-4'>
                 <Form.Input
                   field='username'
                   label={t('用户名')}
@@ -538,6 +555,8 @@ const RegisterForm = () => {
                   name='username'
                   onChange={(value) => handleChange('username', value)}
                   prefix={<IconUser />}
+                  className='!rounded-lg'
+                  style={{ width: '100%' }}
                 />
 
                 <Form.Input
@@ -548,6 +567,8 @@ const RegisterForm = () => {
                   mode='password'
                   onChange={(value) => handleChange('password', value)}
                   prefix={<IconLock />}
+                  className='!rounded-lg'
+                  style={{ width: '100%' }}
                 />
 
                 <Form.Input
@@ -558,6 +579,8 @@ const RegisterForm = () => {
                   mode='password'
                   onChange={(value) => handleChange('password2', value)}
                   prefix={<IconLock />}
+                  className='!rounded-lg'
+                  style={{ width: '100%' }}
                 />
 
                 {showEmailVerification && (
@@ -633,10 +656,10 @@ const RegisterForm = () => {
                   </div>
                 )}
 
-                <div className='space-y-2 pt-2'>
+                <div className='space-y-3 pt-2'>
                   <Button
                     theme='solid'
-                    className='w-full !rounded-full'
+                    className='w-full !rounded-lg !h-12 font-medium transition-all hover:shadow-md'
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit}
@@ -744,17 +767,7 @@ const RegisterForm = () => {
         style={{ top: '50%', left: '-120px' }}
       />
       <div className='w-full max-w-sm mt-[60px]'>
-        {showEmailRegister ||
-        !(
-          status.github_oauth ||
-          status.discord_oauth ||
-          status.oidc_enabled ||
-          status.wechat_login ||
-          status.linuxdo_oauth ||
-          status.telegram_oauth
-        )
-          ? renderEmailRegisterForm()
-          : renderOAuthOptions()}
+        {shouldShowEmailForm ? renderEmailRegisterForm() : renderOAuthOptions()}
         {renderWeChatLoginModal()}
 
         {turnstileEnabled && (

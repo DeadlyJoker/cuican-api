@@ -18,32 +18,61 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useState } from 'react';
-import { Button, Space } from '@douyinfe/semi-ui';
+import { Button, Space, Dropdown } from '@douyinfe/semi-ui';
+import { IconTreeTriangleDown } from '@douyinfe/semi-icons';
 import { showError } from '../../../helpers';
-import CopyTokensModal from './modals/CopyTokensModal';
 import DeleteTokensModal from './modals/DeleteTokensModal';
 
 const TokensActions = ({
   selectedKeys,
   setEditingToken,
   setShowEdit,
-  batchCopyTokens,
   batchDeleteTokens,
   copyText,
   t,
 }) => {
   // Modal states
-  const [showCopyModal, setShowCopyModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Handle copy selected tokens with options
-  const handleCopySelectedTokens = () => {
+  // Handle copy with name and key format
+  const handleCopyWithName = async () => {
     if (selectedKeys.length === 0) {
       showError(t('请至少选择一个令牌！'));
       return;
     }
-    setShowCopyModal(true);
+    let content = '';
+    for (let i = 0; i < selectedKeys.length; i++) {
+      content += selectedKeys[i].name + '    sk-' + selectedKeys[i].key + '\n';
+    }
+    await copyText(content);
   };
+
+  // Handle copy with key only format
+  const handleCopyKeyOnly = async () => {
+    if (selectedKeys.length === 0) {
+      showError(t('请至少选择一个令牌！'));
+      return;
+    }
+    let content = '';
+    for (let i = 0; i < selectedKeys.length; i++) {
+      content += 'sk-' + selectedKeys[i].key + '\n';
+    }
+    await copyText(content);
+  };
+
+  // Copy menu items
+  const copyMenuItems = [
+    {
+      node: 'item',
+      name: t('名称+密钥'),
+      onClick: handleCopyWithName,
+    },
+    {
+      node: 'item',
+      name: t('仅密钥'),
+      onClick: handleCopyKeyOnly,
+    },
+  ];
 
   // Handle delete selected tokens with confirmation
   const handleDeleteSelectedTokens = () => {
@@ -77,14 +106,22 @@ const TokensActions = ({
           {t('添加令牌')}
         </Button>
 
-        <Button
-          type='tertiary'
-          className='flex-1 md:flex-initial'
-          onClick={handleCopySelectedTokens}
-          size='small'
+        <Dropdown
+          trigger='click'
+          position='bottomLeft'
+          menu={copyMenuItems}
+          disabled={selectedKeys.length === 0}
         >
-          {t('复制所选令牌')}
-        </Button>
+          <Button
+            type='tertiary'
+            className='flex-1 md:flex-initial'
+            size='small'
+            icon={<IconTreeTriangleDown />}
+            iconPosition='right'
+          >
+            {t('复制所选令牌')}
+          </Button>
+        </Dropdown>
 
         <Button
           type='danger'
@@ -95,14 +132,6 @@ const TokensActions = ({
           {t('删除所选令牌')}
         </Button>
       </div>
-
-      <CopyTokensModal
-        visible={showCopyModal}
-        onCancel={() => setShowCopyModal(false)}
-        selectedKeys={selectedKeys}
-        copyText={copyText}
-        t={t}
-      />
 
       <DeleteTokensModal
         visible={showDeleteModal}

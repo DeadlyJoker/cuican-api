@@ -184,12 +184,14 @@ const PageLayout = () => {
           }}
         >
           <Content
+            className='page-transition'
             style={{
               flex: '1 0 auto',
               overflowY: isMobile ? 'visible' : 'hidden',
               WebkitOverflowScrolling: 'touch',
               padding: shouldInnerPadding ? (isMobile ? '5px' : '24px') : '0',
               position: 'relative',
+              background: 'var(--semi-color-bg-0)',
             }}
           >
             <App />

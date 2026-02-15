@@ -129,6 +129,11 @@ func SetApiRouter(router *gin.Engine) {
 			optionRoute.POST("/rest_model_ratio", controller.ResetModelRatio)
 			optionRoute.POST("/migrate_console_setting", controller.MigrateConsoleSetting) // 用于迁移检测的旧键，下个版本会删除
 		}
+		paymentRoute := apiRouter.Group("/payment")
+		paymentRoute.Use(middleware.RootAuth())
+		{
+			paymentRoute.GET("/test", controller.TestPaymentConfig)
+		}
 		performanceRoute := apiRouter.Group("/performance")
 		performanceRoute.Use(middleware.RootAuth())
 		{

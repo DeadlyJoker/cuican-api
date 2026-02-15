@@ -184,10 +184,12 @@ const EditRedemptionModal = (props) => {
         visible={props.visiable}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
-            <Space>
+          <div className='flex justify-end bg-white px-6 py-4 border-t border-gray-100'>
+            <Space size='large'>
               <Button
                 theme='solid'
+                type='primary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:shadow-md'
                 onClick={() => formApiRef.current?.submitForm()}
                 icon={<IconSave />}
                 loading={loading}
@@ -195,8 +197,9 @@ const EditRedemptionModal = (props) => {
                 {t('提交')}
               </Button>
               <Button
-                theme='light'
-                type='primary'
+                theme='borderless'
+                type='tertiary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:bg-gray-50'
                 onClick={handleCancel}
                 icon={<IconClose />}
               >
@@ -215,8 +218,8 @@ const EditRedemptionModal = (props) => {
             onSubmit={submit}
           >
             {({ values }) => (
-              <div className='p-2'>
-                <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
+              <div className='p-6 space-y-4'>
+                <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                   {/* Header: Basic Info */}
                   <div className='flex items-center mb-2'>
                     <Avatar
@@ -249,6 +252,7 @@ const EditRedemptionModal = (props) => {
                             : [{ required: true, message: t('请输入名称') }]
                         }
                         showClear
+                        className='!rounded-lg'
                       />
                     </Col>
                     <Col span={24}>
@@ -259,12 +263,13 @@ const EditRedemptionModal = (props) => {
                         placeholder={t('选择过期时间（可选，留空为永久）')}
                         style={{ width: '100%' }}
                         showClear
+                        className='!rounded-lg'
                       />
                     </Col>
                   </Row>
                 </Card>
 
-                <Card className='!rounded-2xl shadow-sm border-0'>
+                <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                   {/* Header: Quota Settings */}
                   <div className='flex items-center mb-2'>
                     <Avatar
@@ -315,6 +320,7 @@ const EditRedemptionModal = (props) => {
                           { value: 500000000, label: '1000$' },
                         ]}
                         showClear
+                        className='!rounded-lg'
                       />
                     </Col>
                     {!isEdit && (
@@ -336,6 +342,7 @@ const EditRedemptionModal = (props) => {
                           ]}
                           style={{ width: '100%' }}
                           showClear
+                          className='!rounded-lg'
                         />
                       </Col>
                     )}

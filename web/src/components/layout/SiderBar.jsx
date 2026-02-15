@@ -67,16 +67,40 @@ const SiderBar = ({ onNavigate = () => {} }) => {
   const location = useLocation();
   const [routerMapState, setRouterMapState] = useState(routerMap);
 
+  // 使用 state 来跟踪 localStorage 值的变化
+  const [enableDataExport, setEnableDataExport] = useState(() =>
+    localStorage.getItem('enable_data_export') === 'true',
+  );
+  const [enableDrawing, setEnableDrawing] = useState(() =>
+    localStorage.getItem('enable_drawing') === 'true',
+  );
+  const [enableTask, setEnableTask] = useState(() =>
+    localStorage.getItem('enable_task') === 'true',
+  );
+
+  // 监听 localStorage 变化（支持多标签页同步）
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'enable_data_export') {
+        setEnableDataExport(e.newValue === 'true');
+      } else if (e.key === 'enable_drawing') {
+        setEnableDrawing(e.newValue === 'true');
+      } else if (e.key === 'enable_task') {
+        setEnableTask(e.newValue === 'true');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const workspaceItems = useMemo(() => {
     const items = [
       {
         text: t('数据看板'),
         itemKey: 'detail',
         to: '/detail',
-        className:
-          localStorage.getItem('enable_data_export') === 'true'
-            ? ''
-            : 'tableHiddle',
+        className: enableDataExport ? '' : 'tableHiddle',
       },
       {
         text: t('令牌管理'),
@@ -92,17 +116,13 @@ const SiderBar = ({ onNavigate = () => {} }) => {
         text: t('绘图日志'),
         itemKey: 'midjourney',
         to: '/midjourney',
-        className:
-          localStorage.getItem('enable_drawing') === 'true'
-            ? ''
-            : 'tableHiddle',
+        className: enableDrawing ? '' : 'tableHiddle',
       },
       {
         text: t('任务日志'),
         itemKey: 'task',
         to: '/task',
-        className:
-          localStorage.getItem('enable_task') === 'true' ? '' : 'tableHiddle',
+        className: enableTask ? '' : 'tableHiddle',
       },
     ];
 
@@ -113,13 +133,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
     });
 
     return filteredItems;
-  }, [
-    localStorage.getItem('enable_data_export'),
-    localStorage.getItem('enable_drawing'),
-    localStorage.getItem('enable_task'),
-    t,
-    isModuleVisible,
-  ]);
+  }, [enableDataExport, enableDrawing, enableTask, t, isModuleVisible]);
 
   const financeItems = useMemo(() => {
     const items = [

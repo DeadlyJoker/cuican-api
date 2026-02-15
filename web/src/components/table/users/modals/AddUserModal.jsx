@@ -88,10 +88,12 @@ const AddUserModal = (props) => {
         visible={props.visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
-            <Space>
+          <div className='flex justify-end bg-white px-6 py-4 border-t border-gray-100'>
+            <Space size='large'>
               <Button
                 theme='solid'
+                type='primary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:shadow-md'
                 onClick={() => formApiRef.current?.submitForm()}
                 icon={<IconSave />}
                 loading={loading}
@@ -99,8 +101,9 @@ const AddUserModal = (props) => {
                 {t('提交')}
               </Button>
               <Button
-                theme='light'
-                type='primary'
+                theme='borderless'
+                type='tertiary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:bg-gray-50'
                 onClick={handleCancel}
                 icon={<IconClose />}
               >
@@ -123,8 +126,8 @@ const AddUserModal = (props) => {
               formApiRef.current?.scrollToError();
             }}
           >
-            <div className='p-2'>
-              <Card className='!rounded-2xl shadow-sm border-0'>
+            <div className='p-6'>
+              <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                 <div className='flex items-center mb-2'>
                   <Avatar size='small' color='blue' className='mr-2 shadow-md'>
                     <IconUserAdd size={16} />
@@ -145,6 +148,8 @@ const AddUserModal = (props) => {
                       placeholder={t('请输入用户名')}
                       rules={[{ required: true, message: t('请输入用户名') }]}
                       showClear
+                      className='!rounded-lg'
+                      style={{ width: '100%' }}
                     />
                   </Col>
                   <Col span={24}>
@@ -153,6 +158,8 @@ const AddUserModal = (props) => {
                       label={t('显示名称')}
                       placeholder={t('请输入显示名称')}
                       showClear
+                      className='!rounded-lg'
+                      style={{ width: '100%' }}
                     />
                   </Col>
                   <Col span={24}>
@@ -163,6 +170,8 @@ const AddUserModal = (props) => {
                       placeholder={t('请输入密码')}
                       rules={[{ required: true, message: t('请输入密码') }]}
                       showClear
+                      className='!rounded-lg'
+                      style={{ width: '100%' }}
                     />
                   </Col>
                   <Col span={24}>
@@ -171,6 +180,8 @@ const AddUserModal = (props) => {
                       label={t('备注')}
                       placeholder={t('请输入备注（仅管理员可见）')}
                       showClear
+                      className='!rounded-lg'
+                      style={{ width: '100%' }}
                     />
                   </Col>
                 </Row>

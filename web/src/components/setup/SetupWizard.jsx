@@ -304,21 +304,14 @@ const SetupWizard = () => {
             }}
             initValues={formData}
           >
-            {/* 步骤内容：保持所有字段挂载，仅隐藏非当前步骤 */}
+            {/* 步骤内容：只渲染当前步骤 */}
             <div className='steps-content'>
-              {[0, 1, 2, 3].map((idx) => (
-                <div
-                  key={idx}
-                  style={{ display: currentStep === idx ? 'block' : 'none' }}
-                >
-                  {React.cloneElement(getStepContent(idx), {
-                    ...stepNavigationProps,
-                    renderNavigationButtons: () => (
-                      <StepNavigation {...stepNavigationProps} />
-                    ),
-                  })}
-                </div>
-              ))}
+              {React.cloneElement(getStepContent(currentStep), {
+                ...stepNavigationProps,
+                renderNavigationButtons: () => (
+                  <StepNavigation {...stepNavigationProps} />
+                ),
+              })}
             </div>
           </Form>
         </Card>

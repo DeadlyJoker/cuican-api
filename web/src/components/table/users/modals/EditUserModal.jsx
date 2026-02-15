@@ -159,10 +159,12 @@ const EditUserModal = (props) => {
         visible={props.visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-end bg-white'>
-            <Space>
+          <div className='flex justify-end bg-white px-6 py-4 border-t border-gray-100'>
+            <Space size='large'>
               <Button
                 theme='solid'
+                type='primary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:shadow-md'
                 onClick={() => formApiRef.current?.submitForm()}
                 icon={<IconSave />}
                 loading={loading}
@@ -170,8 +172,9 @@ const EditUserModal = (props) => {
                 {t('提交')}
               </Button>
               <Button
-                theme='light'
-                type='primary'
+                theme='borderless'
+                type='tertiary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:bg-gray-50'
                 onClick={handleCancel}
                 icon={<IconClose />}
               >
@@ -190,9 +193,9 @@ const EditUserModal = (props) => {
             onSubmit={submit}
           >
             {({ values }) => (
-              <div className='p-2'>
+              <div className='p-6 space-y-4'>
                 {/* 基本信息 */}
-                <Card className='!rounded-2xl shadow-sm border-0'>
+                <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
@@ -219,6 +222,8 @@ const EditUserModal = (props) => {
                         placeholder={t('请输入新的用户名')}
                         rules={[{ required: true, message: t('请输入用户名') }]}
                         showClear
+                        className='!rounded-lg'
+                        style={{ width: '100%' }}
                       />
                     </Col>
 
@@ -229,6 +234,8 @@ const EditUserModal = (props) => {
                         placeholder={t('请输入新的密码，最短 8 位')}
                         mode='password'
                         showClear
+                        className='!rounded-lg'
+                        style={{ width: '100%' }}
                       />
                     </Col>
 
@@ -238,6 +245,8 @@ const EditUserModal = (props) => {
                         label={t('显示名称')}
                         placeholder={t('请输入新的显示名称')}
                         showClear
+                        className='!rounded-lg'
+                        style={{ width: '100%' }}
                       />
                     </Col>
 
@@ -247,6 +256,8 @@ const EditUserModal = (props) => {
                         label={t('备注')}
                         placeholder={t('请输入备注（仅管理员可见）')}
                         showClear
+                        className='!rounded-lg'
+                        style={{ width: '100%' }}
                       />
                     </Col>
                   </Row>
@@ -254,7 +265,7 @@ const EditUserModal = (props) => {
 
                 {/* 权限设置 */}
                 {userId && (
-                  <Card className='!rounded-2xl shadow-sm border-0'>
+                  <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                     <div className='flex items-center mb-2'>
                       <Avatar
                         size='small'
@@ -292,7 +303,7 @@ const EditUserModal = (props) => {
                           label={t('剩余额度')}
                           placeholder={t('请输入新的剩余额度')}
                           step={500000}
-                          extraText={renderQuotaWithPrompt(values.quota || 0)}
+                          extraText={renderQuotaWithPrompt(values.quota ?? 0)}
                           rules={[{ required: true, message: t('请输入额度') }]}
                           style={{ width: '100%' }}
                         />
@@ -301,9 +312,14 @@ const EditUserModal = (props) => {
                       <Col span={14}>
                         <Form.Slot label={t('添加额度')}>
                           <Button
+                            theme='light'
+                            type='primary'
+                            className='!rounded-lg !h-10 !px-4 transition-all hover:shadow-sm font-medium'
                             icon={<IconPlus />}
                             onClick={() => setIsModalOpen(true)}
-                          />
+                          >
+                            {t('添加')}
+                          </Button>
                         </Form.Slot>
                       </Col>
                     </Row>
@@ -311,7 +327,7 @@ const EditUserModal = (props) => {
                 )}
 
                 {/* 绑定信息 */}
-                <Card className='!rounded-2xl shadow-sm border-0'>
+                <Card className='!rounded-xl shadow-sm border border-gray-100 bg-white'>
                   <div className='flex items-center mb-2'>
                     <Avatar
                       size='small'
@@ -378,14 +394,14 @@ const EditUserModal = (props) => {
         }
       >
         <div className='mb-4'>
-          {(() => {
-            const current = formApiRef.current?.getValue('quota') || 0;
-            return (
-              <Text type='secondary' className='block mb-2'>
-                {`${t('新额度：')}${renderQuota(current)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(current + parseInt(addQuotaLocal || 0))}`}
-              </Text>
-            );
-          })()}
+          <Text type='secondary' className='block mb-2'>
+            {(() => {
+              const current = formApiRef.current?.getValue('quota') ?? 0;
+              const delta = parseInt(addQuotaLocal) || 0;
+              const newQuota = current + delta;
+              return `${t('新额度：')}${renderQuota(current)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(newQuota)}`;
+            })()}
+          </Text>
         </div>
         <InputNumber
           placeholder={t('需要添加的额度（支持负数）')}

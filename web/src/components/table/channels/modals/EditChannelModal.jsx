@@ -47,6 +47,7 @@ import {
   Highlight,
   Input,
   Tooltip,
+  Collapse,
 } from '@douyinfe/semi-ui';
 import {
   getChannelModels,
@@ -1729,15 +1730,15 @@ const EditChannelModal = (props) => {
         visible={props.visible}
         width={isMobile ? '100%' : 600}
         footer={
-          <div className='flex justify-between items-center bg-white'>
+          <div className='flex justify-between items-center bg-white px-6 py-4 border-t border-gray-100'>
             <div className='flex gap-2'>
               <Button
                 size='small'
                 type='tertiary'
+                className='!rounded-full transition-all hover:bg-gray-100'
                 icon={<IconChevronUp />}
                 onClick={() => navigateToSection('up')}
                 style={{
-                  borderRadius: '50%',
                   width: '32px',
                   height: '32px',
                   padding: 0,
@@ -1750,10 +1751,10 @@ const EditChannelModal = (props) => {
               <Button
                 size='small'
                 type='tertiary'
+                className='!rounded-full transition-all hover:bg-gray-100'
                 icon={<IconChevronDown />}
                 onClick={() => navigateToSection('down')}
                 style={{
-                  borderRadius: '50%',
                   width: '32px',
                   height: '32px',
                   padding: 0,
@@ -1764,17 +1765,21 @@ const EditChannelModal = (props) => {
                 title={t('下一个表单块')}
               />
             </div>
-            <Space>
+            <Space size='large'>
               <Button
                 theme='solid'
+                type='primary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:shadow-md'
                 onClick={() => formApiRef.current?.submitForm()}
                 icon={<IconSave />}
+                loading={loading}
               >
                 {t('提交')}
               </Button>
               <Button
-                theme='light'
-                type='primary'
+                theme='borderless'
+                type='tertiary'
+                className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:bg-gray-50'
                 onClick={handleCancel}
                 icon={<IconClose />}
               >
@@ -1794,27 +1799,33 @@ const EditChannelModal = (props) => {
         >
           {() => (
             <Spin spinning={loading}>
-              <div className='p-2 space-y-3' ref={formContainerRef}>
-                <div ref={(el) => (formSectionRefs.current.basicInfo = el)}>
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
-                    {/* Header: Basic Info */}
-                    <div className='flex items-center mb-2'>
-                      <Avatar
-                        size='small'
-                        color='blue'
-                        className='mr-2 shadow-md'
-                      >
-                        <IconServer size={16} />
-                      </Avatar>
-                      <div>
-                        <Text className='text-lg font-medium'>
-                          {t('基本信息')}
-                        </Text>
-                        <div className='text-xs text-gray-600'>
-                          {t('渠道的基本配置信息')}
+              <div className='p-2' ref={formContainerRef}>
+                <Collapse
+                  defaultActiveKey={['basicInfo', 'apiConfig', 'modelConfig', 'advancedSettings', 'channelExtraSettings']}
+                  className='space-y-3'
+                >
+                  <Collapse.Panel
+                    itemKey='basicInfo'
+                    header={
+                      <div className='flex items-center' ref={(el) => (formSectionRefs.current.basicInfo = el)}>
+                        <Avatar
+                          size='small'
+                          color='blue'
+                          className='mr-2 shadow-md'
+                        >
+                          <IconServer size={16} />
+                        </Avatar>
+                        <div>
+                          <Text className='text-lg font-medium'>
+                            {t('基本信息')}
+                          </Text>
+                          <div className='text-xs text-gray-600'>
+                            {t('渠道的基本配置信息')}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    }
+                  >
 
                     {isIonetChannel && (
                       <Banner
@@ -2444,34 +2455,36 @@ const EditChannelModal = (props) => {
                         }
                       />
                     )}
-                  </Card>
-                </div>
+                  </Collapse.Panel>
 
-                {/* API Configuration Card */}
-                {showApiConfigCard && (
-                  <div ref={(el) => (formSectionRefs.current.apiConfig = el)}>
-                    <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
-                      {/* Header: API Config */}
-                      <div
-                        className='flex items-center mb-2'
-                        onClick={handleApiConfigSecretClick}
-                      >
-                        <Avatar
-                          size='small'
-                          color='green'
-                          className='mr-2 shadow-md'
+                  {/* API Configuration Panel */}
+                  {showApiConfigCard && (
+                    <Collapse.Panel
+                      itemKey='apiConfig'
+                      header={
+                        <div
+                          className='flex items-center'
+                          ref={(el) => (formSectionRefs.current.apiConfig = el)}
+                          onClick={handleApiConfigSecretClick}
                         >
-                          <IconGlobe size={16} />
-                        </Avatar>
-                        <div>
-                          <Text className='text-lg font-medium'>
-                            {t('API 配置')}
-                          </Text>
-                          <div className='text-xs text-gray-600'>
-                            {t('API 地址和相关配置')}
+                          <Avatar
+                            size='small'
+                            color='green'
+                            className='mr-2 shadow-md'
+                          >
+                            <IconGlobe size={16} />
+                          </Avatar>
+                          <div>
+                            <Text className='text-lg font-medium'>
+                              {t('API 配置')}
+                            </Text>
+                            <div className='text-xs text-gray-600'>
+                              {t('API 地址和相关配置')}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      }
+                    >
 
                       {inputs.type === 40 && (
                         <Banner
@@ -2678,31 +2691,32 @@ const EditChannelModal = (props) => {
                           />
                         </div>
                       )}
-                    </Card>
-                  </div>
-                )}
+                    </Collapse.Panel>
+                  )}
 
-                {/* Model Configuration Card */}
-                <div ref={(el) => (formSectionRefs.current.modelConfig = el)}>
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
-                    {/* Header: Model Config */}
-                    <div className='flex items-center mb-2'>
-                      <Avatar
-                        size='small'
-                        color='purple'
-                        className='mr-2 shadow-md'
-                      >
-                        <IconCode size={16} />
-                      </Avatar>
-                      <div>
-                        <Text className='text-lg font-medium'>
-                          {t('模型配置')}
-                        </Text>
-                        <div className='text-xs text-gray-600'>
-                          {t('模型选择和映射设置')}
+                  {/* Model Configuration Panel */}
+                  <Collapse.Panel
+                    itemKey='modelConfig'
+                    header={
+                      <div className='flex items-center' ref={(el) => (formSectionRefs.current.modelConfig = el)}>
+                        <Avatar
+                          size='small'
+                          color='purple'
+                          className='mr-2 shadow-md'
+                        >
+                          <IconCode size={16} />
+                        </Avatar>
+                        <div>
+                          <Text className='text-lg font-medium'>
+                            {t('模型配置')}
+                          </Text>
+                          <div className='text-xs text-gray-600'>
+                            {t('模型选择和映射设置')}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    }
+                  >
 
                     <Form.Select
                       field='models'
@@ -2919,32 +2933,31 @@ const EditChannelModal = (props) => {
                         '键为请求中的模型名称，值为要替换的模型名称',
                       )}
                     />
-                  </Card>
-                </div>
+                  </Collapse.Panel>
 
-                {/* Advanced Settings Card */}
-                <div
-                  ref={(el) => (formSectionRefs.current.advancedSettings = el)}
-                >
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
-                    {/* Header: Advanced Settings */}
-                    <div className='flex items-center mb-2'>
-                      <Avatar
-                        size='small'
-                        color='orange'
-                        className='mr-2 shadow-md'
-                      >
-                        <IconSetting size={16} />
-                      </Avatar>
-                      <div>
-                        <Text className='text-lg font-medium'>
-                          {t('高级设置')}
-                        </Text>
-                        <div className='text-xs text-gray-600'>
-                          {t('渠道的高级配置选项')}
+                  {/* Advanced Settings Panel */}
+                  <Collapse.Panel
+                    itemKey='advancedSettings'
+                    header={
+                      <div className='flex items-center' ref={(el) => (formSectionRefs.current.advancedSettings = el)}>
+                        <Avatar
+                          size='small'
+                          color='orange'
+                          className='mr-2 shadow-md'
+                        >
+                          <IconSetting size={16} />
+                        </Avatar>
+                        <div>
+                          <Text className='text-lg font-medium'>
+                            {t('高级设置')}
+                          </Text>
+                          <div className='text-xs text-gray-600'>
+                            {t('渠道的高级配置选项')}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    }
+                  >
 
                     <Form.Select
                       field='groups'
@@ -3250,31 +3263,28 @@ const EditChannelModal = (props) => {
                         />
                       </>
                     )}
-                  </Card>
-                </div>
+                  </Collapse.Panel>
 
-                {/* Channel Extra Settings Card */}
-                <div
-                  ref={(el) =>
-                    (formSectionRefs.current.channelExtraSettings = el)
-                  }
-                >
-                  <Card className='!rounded-2xl shadow-sm border-0 mb-6'>
-                    {/* Header: Channel Extra Settings */}
-                    <div className='flex items-center mb-2'>
-                      <Avatar
-                        size='small'
-                        color='violet'
-                        className='mr-2 shadow-md'
-                      >
-                        <IconBolt size={16} />
-                      </Avatar>
-                      <div>
-                        <Text className='text-lg font-medium'>
-                          {t('渠道额外设置')}
-                        </Text>
+                  {/* Channel Extra Settings Panel */}
+                  <Collapse.Panel
+                    itemKey='channelExtraSettings'
+                    header={
+                      <div className='flex items-center' ref={(el) => (formSectionRefs.current.channelExtraSettings = el)}>
+                        <Avatar
+                          size='small'
+                          color='violet'
+                          className='mr-2 shadow-md'
+                        >
+                          <IconBolt size={16} />
+                        </Avatar>
+                        <div>
+                          <Text className='text-lg font-medium'>
+                            {t('渠道额外设置')}
+                          </Text>
+                        </div>
                       </div>
-                    </div>
+                    }
+                  >
 
                     {inputs.type === 1 && (
                       <Form.Switch
@@ -3362,8 +3372,8 @@ const EditChannelModal = (props) => {
                         '如果用户请求中包含系统提示词，则使用此设置拼接到用户的系统提示词前面',
                       )}
                     />
-                  </Card>
-                </div>
+                  </Collapse.Panel>
+                </Collapse>
               </div>
             </Spin>
           )}

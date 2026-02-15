@@ -121,6 +121,23 @@ const LoginForm = () => {
     }
   }, [statusState?.status]);
 
+  // 检查是否有任何 OAuth 选项可用
+  const hasOAuthOptions = useMemo(() => {
+    return !!(
+      status.github_oauth ||
+      status.discord_oauth ||
+      status.oidc_enabled ||
+      status.wechat_login ||
+      status.linuxdo_oauth ||
+      status.telegram_oauth
+    );
+  }, [status]);
+
+  // 决定显示哪个表单
+  const shouldShowEmailForm = useMemo(() => {
+    return showEmailLogin || !hasOAuthOptions;
+  }, [showEmailLogin, hasOAuthOptions]);
+
   useEffect(() => {
     if (status?.turnstile_check) {
       setTurnstileEnabled(true);
@@ -483,7 +500,7 @@ const LoginForm = () => {
                 {status.wechat_login && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={
                       <Icon svg={<WeChatIcon />} style={{ color: '#07C160' }} />
@@ -491,54 +508,54 @@ const LoginForm = () => {
                     onClick={onWeChatLoginClicked}
                     loading={wechatLoading}
                   >
-                    <span className='ml-3'>{t('使用 微信 继续')}</span>
+                    <span className='ml-2'>{t('使用 微信 继续')}</span>
                   </Button>
                 )}
 
                 {status.github_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={<IconGithubLogo size='large' />}
                     onClick={handleGitHubClick}
                     loading={githubLoading}
                     disabled={githubButtonDisabled}
                   >
-                    <span className='ml-3'>{githubButtonText}</span>
+                    <span className='ml-2'>{githubButtonText}</span>
                   </Button>
                 )}
 
                 {status.discord_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={<SiDiscord style={{ color: '#5865F2', width: '20px', height: '20px' }} />}
                     onClick={handleDiscordClick}
                     loading={discordLoading}
                   >
-                    <span className='ml-3'>{t('使用 Discord 继续')}</span>
+                    <span className='ml-2'>{t('使用 Discord 继续')}</span>
                   </Button>
                 )}
 
                 {status.oidc_enabled && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={<OIDCIcon style={{ color: '#1877F2' }} />}
                     onClick={handleOIDCClick}
                     loading={oidcLoading}
                   >
-                    <span className='ml-3'>{t('使用 OIDC 继续')}</span>
+                    <span className='ml-2'>{t('使用 OIDC 继续')}</span>
                   </Button>
                 )}
 
                 {status.linuxdo_oauth && (
                   <Button
                     theme='outline'
-                    className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors'
+                    className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium'
                     type='tertiary'
                     icon={
                       <LinuxDoIcon
@@ -552,7 +569,7 @@ const LoginForm = () => {
                     onClick={handleLinuxDOClick}
                     loading={linuxdoLoading}
                   >
-                    <span className='ml-3'>{t('使用 LinuxDO 继续')}</span>
+                    <span className='ml-2'>{t('使用 LinuxDO 继续')}</span>
                   </Button>
                 )}
 
@@ -574,7 +591,7 @@ const LoginForm = () => {
                     onClick={handlePasskeyLogin}
                     loading={passkeyLoading}
                   >
-                    <span className='ml-3'>{t('使用 Passkey 登录')}</span>
+                    <span className='ml-2'>{t('使用 Passkey 登录')}</span>
                   </Button>
                 )}
 
@@ -585,12 +602,12 @@ const LoginForm = () => {
                 <Button
                   theme='solid'
                   type='primary'
-                  className='w-full h-12 flex items-center justify-center bg-black text-white !rounded-full hover:bg-gray-800 transition-colors'
+                  className='w-full h-12 flex items-center justify-center bg-black text-white !rounded-lg hover:bg-gray-800 hover:shadow-md transition-all font-medium'
                   icon={<IconMail size='large' />}
                   onClick={handleEmailLoginClick}
                   loading={emailLoginLoading}
                 >
-                  <span className='ml-3'>{t('使用 邮箱或用户名 登录')}</span>
+                  <span className='ml-2'>{t('使用 邮箱或用户名 登录')}</span>
                 </Button>
               </div>
 
@@ -672,7 +689,7 @@ const LoginForm = () => {
                 <Button
                   theme='outline'
                   type='tertiary'
-                  className='w-full h-12 flex items-center justify-center !rounded-full border border-gray-200 hover:bg-gray-50 transition-colors mb-4'
+                  className='w-full h-12 flex items-center justify-center !rounded-lg border border-gray-200 hover:bg-gray-50 hover:shadow-sm transition-all font-medium mb-4'
                   icon={<IconKey size='large' />}
                   onClick={handlePasskeyLogin}
                   loading={passkeyLoading}
@@ -680,7 +697,7 @@ const LoginForm = () => {
                   <span className='ml-3'>{t('使用 Passkey 登录')}</span>
                 </Button>
               )}
-              <Form className='space-y-3'>
+              <Form className='space-y-4'>
                 <Form.Input
                   field='username'
                   label={t('用户名或邮箱')}
@@ -688,6 +705,8 @@ const LoginForm = () => {
                   name='username'
                   onChange={(value) => handleChange('username', value)}
                   prefix={<IconMail />}
+                  className='!rounded-lg'
+                  style={{ width: '100%' }}
                 />
 
                 <Form.Input
@@ -698,6 +717,8 @@ const LoginForm = () => {
                   mode='password'
                   onChange={(value) => handleChange('password', value)}
                   prefix={<IconLock />}
+                  className='!rounded-lg'
+                  style={{ width: '100%' }}
                 />
 
                 {(hasUserAgreement || hasPrivacyPolicy) && (
@@ -738,10 +759,10 @@ const LoginForm = () => {
                   </div>
                 )}
 
-                <div className='space-y-2 pt-2'>
+                <div className='space-y-3 pt-2'>
                   <Button
                     theme='solid'
-                    className='w-full !rounded-full'
+                    className='w-full !rounded-lg !h-12 font-medium transition-all hover:shadow-md'
                     type='primary'
                     htmlType='submit'
                     onClick={handleSubmit}
@@ -754,7 +775,7 @@ const LoginForm = () => {
                   <Button
                     theme='borderless'
                     type='tertiary'
-                    className='w-full !rounded-full'
+                    className='w-full !rounded-lg !h-10 font-medium transition-all hover:bg-gray-50'
                     onClick={handleResetPasswordClick}
                     loading={resetPasswordLoading}
                   >
@@ -897,17 +918,7 @@ const LoginForm = () => {
         style={{ top: '50%', left: '-120px' }}
       />
       <div className='w-full max-w-sm mt-[60px]'>
-        {showEmailLogin ||
-        !(
-          status.github_oauth ||
-          status.discord_oauth ||
-          status.oidc_enabled ||
-          status.wechat_login ||
-          status.linuxdo_oauth ||
-          status.telegram_oauth
-        )
-          ? renderEmailLoginForm()
-          : renderOAuthOptions()}
+        {shouldShowEmailForm ? renderEmailLoginForm() : renderOAuthOptions()}
         {renderWeChatLoginModal()}
         {render2FAModal()}
 

@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { Button, Form } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
 
@@ -36,6 +36,57 @@ const ChannelsFilters = ({
   searching,
   t,
 }) => {
+  // Handle form reset and immediate search
+  const formApiRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      searchChannels(enableTagMode);
+    }, 500); // 500ms debounce
+  }, [searchChannels, enableTagMode]);
+
+  // Handle form reset and immediate search
+  const handleReset = () => {
+    if (!formApiRef.current) return;
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    formApiRef.current.reset();
+    setTimeout(() => {
+      refresh();
+    }, 100);
+  };
+
+  // Handle input change with debounce
+  const handleInputChange = () => {
+    debouncedSearch();
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      searchChannels(enableTagMode);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className='flex flex-col md:flex-row justify-between items-center gap-2 w-full'>
       <div className='flex gap-2 w-full md:w-auto order-2 md:order-1'>
@@ -76,12 +127,14 @@ const ChannelsFilters = ({
       <div className='flex flex-col md:flex-row items-center gap-2 w-full md:w-auto order-1 md:order-2'>
         <Form
           initValues={formInitValues}
-          getFormApi={(api) => setFormApi(api)}
+          getFormApi={(api) => {
+            setFormApi(api);
+            formApiRef.current = api;
+          }}
           onSubmit={() => searchChannels(enableTagMode)}
           allowEmpty={true}
           autoComplete='off'
           layout='horizontal'
-          trigger='change'
           stopValidateWithError={false}
           className='flex flex-col md:flex-row items-center gap-2 w-full'
         >
@@ -93,6 +146,8 @@ const ChannelsFilters = ({
               placeholder={t('渠道ID，名称，密钥，API地址')}
               showClear
               pure
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
             />
           </div>
           <div className='w-full md:w-48'>
@@ -103,6 +158,8 @@ const ChannelsFilters = ({
               placeholder={t('模型关键字')}
               showClear
               pure
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
             />
           </div>
           <div className='w-full md:w-32'>
@@ -117,12 +174,7 @@ const ChannelsFilters = ({
               className='w-full'
               showClear
               pure
-              onChange={() => {
-                // 延迟执行搜索，让表单值先更新
-                setTimeout(() => {
-                  searchChannels(enableTagMode);
-                }, 0);
-              }}
+              onChange={debouncedSearch}
             />
           </div>
           <Button
@@ -137,15 +189,7 @@ const ChannelsFilters = ({
           <Button
             size='small'
             type='tertiary'
-            onClick={() => {
-              if (formApi) {
-                formApi.reset();
-                // 重置后立即查询，使用setTimeout确保表单重置完成
-                setTimeout(() => {
-                  refresh();
-                }, 100);
-              }
-            }}
+            onClick={handleReset}
             className='w-full md:w-auto'
           >
             {t('重置')}

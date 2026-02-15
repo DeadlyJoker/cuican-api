@@ -32,6 +32,7 @@ import {
   Col,
   Row,
   Tooltip,
+  Collapse,
 } from '@douyinfe/semi-ui';
 import { Save, X, FileText } from 'lucide-react';
 import { IconInfoCircle, IconLink } from '@douyinfe/semi-icons';
@@ -252,11 +253,12 @@ const EditModelModal = (props) => {
       visible={props.visiable}
       width={isMobile ? '100%' : 600}
       footer={
-        <div className='flex justify-end bg-white'>
-          <Space>
+        <div className='flex justify-end bg-white px-6 py-4 border-t border-gray-100'>
+          <Space size='large'>
             <Button
               theme='solid'
-              className='!rounded-lg'
+              type='primary'
+              className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:shadow-md'
               onClick={() => formApiRef.current?.submitForm()}
               icon={<Save size={16} />}
               loading={loading}
@@ -264,9 +266,9 @@ const EditModelModal = (props) => {
               {t('提交')}
             </Button>
             <Button
-              theme='light'
-              className='!rounded-lg'
-              type='primary'
+              theme='borderless'
+              type='tertiary'
+              className='!rounded-lg !h-10 !px-6 font-medium transition-all hover:bg-gray-50'
               onClick={handleCancel}
               icon={<X size={16} />}
             >
@@ -287,263 +289,335 @@ const EditModelModal = (props) => {
         >
           {({ values }) => (
             <div className='p-2'>
-              {/* 基本信息 */}
-              <Card className='!rounded-2xl shadow-sm border-0'>
-                <div className='flex items-center mb-2'>
-                  <Avatar size='small' color='green' className='mr-2 shadow-md'>
-                    <FileText size={16} />
-                  </Avatar>
-                  <div>
-                    <Text className='text-lg font-medium'>{t('基本信息')}</Text>
-                    <div className='text-xs text-gray-600'>
-                      {t('设置模型的基本信息')}
+              <Collapse
+                defaultActiveKey={['basicInfo', 'tagsVendor', 'endpoints', 'status']}
+                className='space-y-3'
+              >
+                {/* 基本信息 */}
+                <Collapse.Panel
+                  itemKey='basicInfo'
+                  header={
+                    <div className='flex items-center'>
+                      <Avatar size='small' color='green' className='mr-2 shadow-md'>
+                        <FileText size={16} />
+                      </Avatar>
+                      <div>
+                        <Text className='text-lg font-medium'>{t('基本信息')}</Text>
+                        <div className='text-xs text-gray-600'>
+                          {t('设置模型的基本信息')}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <Row gutter={12}>
-                  <Col span={24}>
-                    <Form.Input
-                      field='model_name'
-                      label={t('模型名称')}
-                      placeholder={t('请输入模型名称，如：gpt-4')}
-                      rules={[{ required: true, message: t('请输入模型名称') }]}
-                      showClear
-                    />
-                  </Col>
+                  }
+                >
+                  <Row gutter={12}>
+                    <Col span={24}>
+                      <Form.Input
+                        field='model_name'
+                        label={t('模型名称')}
+                        placeholder={t('请输入模型名称，如：gpt-4')}
+                        rules={[{ required: true, message: t('请输入模型名称') }]}
+                        showClear
+                      />
+                    </Col>
 
-                  <Col span={24}>
-                    <Form.Select
-                      field='name_rule'
-                      label={t('名称匹配类型')}
-                      placeholder={t('请选择名称匹配类型')}
-                      optionList={nameRuleOptions.map((o) => ({
-                        label: t(o.label),
-                        value: o.value,
-                      }))}
-                      rules={[
-                        { required: true, message: t('请选择名称匹配类型') },
-                      ]}
-                      extraText={t(
-                        '根据模型名称和匹配规则查找模型元数据，优先级：精确 > 前缀 > 后缀 > 包含',
-                      )}
-                      style={{ width: '100%' }}
-                    />
-                  </Col>
+                    <Col span={24}>
+                      <Form.Select
+                        field='name_rule'
+                        label={t('名称匹配类型')}
+                        placeholder={t('请选择名称匹配类型')}
+                        optionList={nameRuleOptions.map((o) => ({
+                          label: t(o.label),
+                          value: o.value,
+                        }))}
+                        rules={[
+                          { required: true, message: t('请选择名称匹配类型') },
+                        ]}
+                        extraText={t(
+                          '根据模型名称和匹配规则查找模型元数据，优先级：精确 > 前缀 > 后缀 > 包含',
+                        )}
+                        style={{ width: '100%' }}
+                      />
+                    </Col>
 
-                  <Col span={24}>
-                    <Form.Input
-                      field='icon'
-                      label={t('模型图标')}
-                      placeholder={t('请输入图标名称')}
-                      extraText={
-                        <span>
-                          {t(
-                            "图标使用@lobehub/icons库，如：OpenAI、Claude.Color，支持链式参数：OpenAI.Avatar.type={'platform'}、OpenRouter.Avatar.shape={'square'}，查询所有可用图标请 ",
-                          )}
-                          <Typography.Text
-                            link={{
-                              href: 'https://icons.lobehub.com/components/lobe-hub',
-                              target: '_blank',
-                            }}
-                            icon={<IconLink />}
-                            underline
-                          >
-                            {t('请点击我')}
-                          </Typography.Text>
-                        </span>
-                      }
-                      showClear
-                    />
-                  </Col>
-
-                  <Col span={24}>
-                    <Form.TextArea
-                      field='description'
-                      label={t('描述')}
-                      placeholder={t('请输入模型描述')}
-                      rows={3}
-                      showClear
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <Form.TagInput
-                      field='tags'
-                      label={t('标签')}
-                      placeholder={t('输入标签或使用","分隔多个标签')}
-                      addOnBlur
-                      showClear
-                      onChange={(newTags) => {
-                        if (!formApiRef.current) return;
-                        const normalize = (tags) => {
-                          if (!Array.isArray(tags)) return [];
-                          return [
-                            ...new Set(
-                              tags.flatMap((tag) =>
-                                tag
-                                  .split(',')
-                                  .map((t) => t.trim())
-                                  .filter(Boolean),
-                              ),
-                            ),
-                          ];
-                        };
-                        const normalized = normalize(newTags);
-                        formApiRef.current.setValue('tags', normalized);
-                      }}
-                      style={{ width: '100%' }}
-                      {...(tagGroups.length > 0 && {
-                        extraText: (
-                          <Space wrap>
-                            {tagGroups.map((group) => (
-                              <Button
-                                key={group.id}
-                                size='small'
-                                type='primary'
-                                onClick={() => {
-                                  if (formApiRef.current) {
-                                    const currentTags =
-                                      formApiRef.current.getValue('tags') || [];
-                                    const newTags = [
-                                      ...currentTags,
-                                      ...(group.items || []),
-                                    ];
-                                    const uniqueTags = [...new Set(newTags)];
-                                    formApiRef.current.setValue(
-                                      'tags',
-                                      uniqueTags,
-                                    );
-                                  }
-                                }}
-                              >
-                                {group.name}
-                              </Button>
-                            ))}
-                          </Space>
-                        ),
-                      })}
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <Form.Select
-                      field='vendor_id'
-                      label={t('供应商')}
-                      placeholder={t('选择模型供应商')}
-                      optionList={vendors.map((v) => ({
-                        label: v.name,
-                        value: v.id,
-                      }))}
-                      filter
-                      showClear
-                      onChange={(value) => {
-                        const vendorInfo = vendors.find((v) => v.id === value);
-                        if (vendorInfo && formApiRef.current) {
-                          formApiRef.current.setValue(
-                            'vendor',
-                            vendorInfo.name,
-                          );
-                        }
-                      }}
-                      style={{ width: '100%' }}
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <JSONEditor
-                      field='endpoints'
-                      label={
-                        <span className='inline-flex items-center gap-2'>
-                          <span>{t('端点映射')}</span>
-                          <Tooltip
-                            position='top'
-                            content={t(
-                              '提示：端点映射仅用于模型广场展示，不会影响模型真实调用。如需配置真实调用，请前往「渠道管理」。',
+                    <Col span={24}>
+                      <Form.Input
+                        field='icon'
+                        label={t('模型图标')}
+                        placeholder={t('请输入图标名称')}
+                        extraText={
+                          <span>
+                            {t(
+                              "图标使用@lobehub/icons库，如：OpenAI、Claude.Color，支持链式参数：OpenAI.Avatar.type={'platform'}、OpenRouter.Avatar.shape={'square'}，查询所有可用图标请 ",
                             )}
-                          >
-                            <IconInfoCircle
-                              size='small'
-                              className='text-gray-400 cursor-help'
-                            />
-                          </Tooltip>
-                        </span>
-                      }
-                      placeholder={
-                        '{\n  "openai": {"path": "/v1/chat/completions", "method": "POST"}\n}'
-                      }
-                      value={values.endpoints}
-                      onChange={(val) =>
-                        formApiRef.current?.setValue('endpoints', val)
-                      }
-                      formApi={formApiRef.current}
-                      editorType='object'
-                      template={ENDPOINT_TEMPLATE}
-                      templateLabel={t('填入模板')}
-                      extraText={t('留空则使用默认端点；支持 {path, method}')}
-                      extraFooter={
-                        endpointGroups.length > 0 && (
-                          <Space wrap>
-                            {endpointGroups.map((group) => (
-                              <Button
-                                key={group.id}
+                            <Typography.Text
+                              link={{
+                                href: 'https://icons.lobehub.com/components/lobe-hub',
+                                target: '_blank',
+                              }}
+                              icon={<IconLink />}
+                              underline
+                            >
+                              {t('请点击我')}
+                            </Typography.Text>
+                          </span>
+                        }
+                        showClear
+                      />
+                    </Col>
+
+                    <Col span={24}>
+                      <Form.TextArea
+                        field='description'
+                        label={t('描述')}
+                        placeholder={t('请输入模型描述')}
+                        rows={3}
+                        showClear
+                      />
+                    </Col>
+                  </Row>
+                </Collapse.Panel>
+
+                {/* 标签和供应商 */}
+                <Collapse.Panel
+                  itemKey='tagsVendor'
+                  header={
+                    <div className='flex items-center'>
+                      <Avatar size='small' color='blue' className='mr-2 shadow-md'>
+                        <FileText size={16} />
+                      </Avatar>
+                      <div>
+                        <Text className='text-lg font-medium'>{t('标签和供应商')}</Text>
+                        <div className='text-xs text-gray-600'>
+                          {t('设置模型的标签和供应商信息')}
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Row gutter={12}>
+                    <Col span={24}>
+                      <Form.TagInput
+                        field='tags'
+                        label={t('标签')}
+                        placeholder={t('输入标签或使用","分隔多个标签')}
+                        addOnBlur
+                        showClear
+                        onChange={(newTags) => {
+                          if (!formApiRef.current) return;
+                          const normalize = (tags) => {
+                            if (!Array.isArray(tags)) return [];
+                            return [
+                              ...new Set(
+                                tags.flatMap((tag) =>
+                                  tag
+                                    .split(',')
+                                    .map((t) => t.trim())
+                                    .filter(Boolean),
+                                ),
+                              ),
+                            ];
+                          };
+                          const normalized = normalize(newTags);
+                          formApiRef.current.setValue('tags', normalized);
+                        }}
+                        style={{ width: '100%' }}
+                        {...(tagGroups.length > 0 && {
+                          extraText: (
+                            <Space wrap>
+                              {tagGroups.map((group) => (
+                                <Button
+                                  key={group.id}
+                                  size='small'
+                                  type='primary'
+                                  onClick={() => {
+                                    if (formApiRef.current) {
+                                      const currentTags =
+                                        formApiRef.current.getValue('tags') || [];
+                                      const newTags = [
+                                        ...currentTags,
+                                        ...(group.items || []),
+                                      ];
+                                      const uniqueTags = [...new Set(newTags)];
+                                      formApiRef.current.setValue(
+                                        'tags',
+                                        uniqueTags,
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {group.name}
+                                </Button>
+                              ))}
+                            </Space>
+                          ),
+                        })}
+                      />
+                    </Col>
+                    <Col span={24}>
+                      <Form.Select
+                        field='vendor_id'
+                        label={t('供应商')}
+                        placeholder={t('选择模型供应商')}
+                        optionList={vendors.map((v) => ({
+                          label: v.name,
+                          value: v.id,
+                        }))}
+                        filter
+                        showClear
+                        onChange={(value) => {
+                          const vendorInfo = vendors.find((v) => v.id === value);
+                          if (vendorInfo && formApiRef.current) {
+                            formApiRef.current.setValue(
+                              'vendor',
+                              vendorInfo.name,
+                            );
+                          }
+                        }}
+                        style={{ width: '100%' }}
+                      />
+                    </Col>
+                  </Row>
+                </Collapse.Panel>
+
+                {/* 端点配置 */}
+                <Collapse.Panel
+                  itemKey='endpoints'
+                  header={
+                    <div className='flex items-center'>
+                      <Avatar size='small' color='purple' className='mr-2 shadow-md'>
+                        <FileText size={16} />
+                      </Avatar>
+                      <div>
+                        <Text className='text-lg font-medium'>{t('端点配置')}</Text>
+                        <div className='text-xs text-gray-600'>
+                          {t('配置模型的端点映射')}
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Row gutter={12}>
+                    <Col span={24}>
+                      <JSONEditor
+                        field='endpoints'
+                        label={
+                          <span className='inline-flex items-center gap-2'>
+                            <span>{t('端点映射')}</span>
+                            <Tooltip
+                              position='top'
+                              content={t(
+                                '提示：端点映射仅用于模型广场展示，不会影响模型真实调用。如需配置真实调用，请前往「渠道管理」。',
+                              )}
+                            >
+                              <IconInfoCircle
                                 size='small'
-                                type='primary'
-                                onClick={() => {
-                                  try {
-                                    const current =
-                                      formApiRef.current?.getValue(
-                                        'endpoints',
-                                      ) || '';
-                                    let base = {};
-                                    if (current && current.trim())
-                                      base = JSON.parse(current);
-                                    const groupObj =
-                                      typeof group.items === 'string'
-                                        ? JSON.parse(group.items || '{}')
-                                        : group.items || {};
-                                    const merged = { ...base, ...groupObj };
-                                    formApiRef.current?.setValue(
-                                      'endpoints',
-                                      JSON.stringify(merged, null, 2),
-                                    );
-                                  } catch (e) {
+                                className='text-gray-400 cursor-help'
+                              />
+                            </Tooltip>
+                          </span>
+                        }
+                        placeholder={
+                          '{\n  "openai": {"path": "/v1/chat/completions", "method": "POST"}\n}'
+                        }
+                        value={values.endpoints}
+                        onChange={(val) =>
+                          formApiRef.current?.setValue('endpoints', val)
+                        }
+                        formApi={formApiRef.current}
+                        editorType='object'
+                        template={ENDPOINT_TEMPLATE}
+                        templateLabel={t('填入模板')}
+                        extraText={t('留空则使用默认端点；支持 {path, method}')}
+                        extraFooter={
+                          endpointGroups.length > 0 && (
+                            <Space wrap>
+                              {endpointGroups.map((group) => (
+                                <Button
+                                  key={group.id}
+                                  size='small'
+                                  type='primary'
+                                  onClick={() => {
                                     try {
+                                      const current =
+                                        formApiRef.current?.getValue(
+                                          'endpoints',
+                                        ) || '';
+                                      let base = {};
+                                      if (current && current.trim())
+                                        base = JSON.parse(current);
                                       const groupObj =
                                         typeof group.items === 'string'
                                           ? JSON.parse(group.items || '{}')
                                           : group.items || {};
+                                      const merged = { ...base, ...groupObj };
                                       formApiRef.current?.setValue(
                                         'endpoints',
-                                        JSON.stringify(groupObj, null, 2),
+                                        JSON.stringify(merged, null, 2),
                                       );
-                                    } catch {}
-                                  }
-                                }}
-                              >
-                                {group.name}
-                              </Button>
-                            ))}
-                          </Space>
-                        )
-                      }
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <Form.Switch
-                      field='sync_official'
-                      label={t('参与官方同步')}
-                      extraText={t(
-                        '关闭后，此模型将不会被“同步官方”自动覆盖或创建',
-                      )}
-                      size='large'
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <Form.Switch
-                      field='status'
-                      label={t('状态')}
-                      size='large'
-                    />
-                  </Col>
-                </Row>
-              </Card>
+                                    } catch (e) {
+                                      try {
+                                        const groupObj =
+                                          typeof group.items === 'string'
+                                            ? JSON.parse(group.items || '{}')
+                                            : group.items || {};
+                                        formApiRef.current?.setValue(
+                                          'endpoints',
+                                          JSON.stringify(groupObj, null, 2),
+                                        );
+                                      } catch {}
+                                    }
+                                  }}
+                                >
+                                  {group.name}
+                                </Button>
+                              ))}
+                            </Space>
+                          )
+                        }
+                      />
+                    </Col>
+                  </Row>
+                </Collapse.Panel>
+
+                {/* 状态设置 */}
+                <Collapse.Panel
+                  itemKey='status'
+                  header={
+                    <div className='flex items-center'>
+                      <Avatar size='small' color='orange' className='mr-2 shadow-md'>
+                        <FileText size={16} />
+                      </Avatar>
+                      <div>
+                        <Text className='text-lg font-medium'>{t('状态设置')}</Text>
+                        <div className='text-xs text-gray-600'>
+                          {t('设置模型的同步和启用状态')}
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Row gutter={12}>
+                    <Col span={24}>
+                      <Form.Switch
+                        field='sync_official'
+                        label={t('参与官方同步')}
+                        extraText={t(
+                          '关闭后，此模型将不会被"同步官方"自动覆盖或创建',
+                        )}
+                        size='large'
+                      />
+                    </Col>
+                    <Col span={24}>
+                      <Form.Switch
+                        field='status'
+                        label={t('状态')}
+                        size='large'
+                      />
+                    </Col>
+                  </Row>
+                </Collapse.Panel>
+              </Collapse>
             </div>
           )}
         </Form>

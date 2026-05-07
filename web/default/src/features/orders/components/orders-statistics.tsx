@@ -85,7 +85,7 @@ export function OrdersStatistics() {
     area: { style: { fillOpacity: 0.15 } },
     axes: [
       { orient: 'bottom', label: { autoRotate: true } },
-      { orient: 'left', label: { formatter: (v: number) => `$${v.toFixed(0)}` } },
+      { orient: 'left', label: { formatMethod: (v: number) => `$${Number(v).toFixed(0)}` } },
     ],
     tooltip: {
       mark: {
@@ -105,7 +105,11 @@ export function OrdersStatistics() {
     categoryField: 'method',
     outerRadius: 0.8,
     innerRadius: 0.5,
-    label: { visible: true, position: 'outside' },
+    label: {
+      visible: true,
+      position: 'outside',
+      formatMethod: (text: string | number) => String(text ?? ''),
+    },
     tooltip: {
       mark: {
         content: [
@@ -124,7 +128,11 @@ export function OrdersStatistics() {
     categoryField: 'type',
     outerRadius: 0.8,
     innerRadius: 0.5,
-    label: { visible: true, position: 'outside' },
+    label: {
+      visible: true,
+      position: 'outside',
+      formatMethod: (text: string | number) => String(text ?? ''),
+    },
     tooltip: {
       mark: {
         content: [

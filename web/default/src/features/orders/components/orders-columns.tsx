@@ -81,7 +81,7 @@ export function useOrdersColumns(): ColumnDef<UnifiedOrder>[] {
       ),
       cell: ({ row }) => {
         const method = row.getValue('payment_method') as string
-        return <span>{PAYMENT_METHOD_LABELS[method] || method}</span>
+        return <span>{t(PAYMENT_METHOD_LABELS[method] || method)}</span>
       },
     },
     {

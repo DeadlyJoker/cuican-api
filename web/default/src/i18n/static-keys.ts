@@ -460,6 +460,27 @@ export const STATIC_I18N_KEYS = [
   'Batch detection failed',
   'Batch detection complete: {{channels}} channels, {{add}} to add, {{remove}} to remove, {{fails}} failed',
 
+  // Order management (constants.ts labelKeys & PAYMENT_METHOD_LABELS)
+  'Order Management',
+  'Order List',
+  'Orders',
+  'Statistics',
+  'All Methods',
+  'All Types',
+  'All Status',
+  'TopUp',
+  'Subscription',
+  'Success',
+  'Pending',
+  'Expired',
+  'Failed',
+  'Alipay',
+  'WeChat Pay',
+  'Creem',
+  'Stripe',
+  'Waffo',
+  'Waffo Pancake',
+
   // Misc
   'Cancel',
   'Status',

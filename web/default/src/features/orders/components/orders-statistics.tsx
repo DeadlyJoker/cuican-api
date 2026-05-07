@@ -90,9 +90,9 @@ export function OrdersStatistics() {
     tooltip: {
       mark: {
         content: [
-          { key: t('Date'), value: (datum: Record<string, unknown>) => datum.date },
+          { key: t('Date'), value: (datum: Record<string, unknown>) => String(datum.date ?? '') },
           { key: t('Revenue'), value: (datum: Record<string, unknown>) => `$${(datum.revenue as number).toFixed(2)}` },
-          { key: t('Orders'), value: (datum: Record<string, unknown>) => datum.count },
+          { key: t('Orders'), value: (datum: Record<string, unknown>) => String(datum.count ?? '') },
         ],
       },
     },
@@ -109,9 +109,9 @@ export function OrdersStatistics() {
     tooltip: {
       mark: {
         content: [
-          { key: t('Method'), value: (datum: Record<string, unknown>) => datum.method },
+          { key: t('Method'), value: (datum: Record<string, unknown>) => String(datum.method ?? '') },
           { key: t('Revenue'), value: (datum: Record<string, unknown>) => `$${(datum.revenue as number).toFixed(2)}` },
-          { key: t('Count'), value: (datum: Record<string, unknown>) => datum.count },
+          { key: t('Count'), value: (datum: Record<string, unknown>) => String(datum.count ?? '') },
         ],
       },
     },
@@ -128,9 +128,9 @@ export function OrdersStatistics() {
     tooltip: {
       mark: {
         content: [
-          { key: t('Type'), value: (datum: Record<string, unknown>) => datum.type },
+          { key: t('Type'), value: (datum: Record<string, unknown>) => String(datum.type ?? '') },
           { key: t('Revenue'), value: (datum: Record<string, unknown>) => `$${(datum.revenue as number).toFixed(2)}` },
-          { key: t('Count'), value: (datum: Record<string, unknown>) => datum.count },
+          { key: t('Count'), value: (datum: Record<string, unknown>) => String(datum.count ?? '') },
         ],
       },
     },

@@ -129,7 +129,7 @@ export function useSidebarData(): SidebarData {
             icon: CreditCard,
           },
           {
-            title: t('Orders'),
+            title: t('Order Management'),
             url: '/orders',
             icon: Receipt,
           },

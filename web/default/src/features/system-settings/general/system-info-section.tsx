@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -32,7 +33,6 @@ const _systemInfoSchema = z.object({
   theme: z.object({
     frontend: z.enum(['default', 'classic']),
   }),
-  Notice: z.string().optional(),
   SystemName: z.string().min(1),
   ServerAddress: z.string().optional(),
   AllowedOrigins: z.string().optional(),
@@ -66,7 +66,6 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
       frontend:
         defaultValues.theme?.frontend === 'classic' ? 'classic' : 'default',
     },
-    Notice: normalizeValue(defaultValues.Notice),
     SystemName: normalizeValue(defaultValues.SystemName),
     ServerAddress: normalizeValue(defaultValues.ServerAddress),
     AllowedOrigins: normalizeValue(defaultValues.AllowedOrigins),
@@ -84,7 +83,6 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
     theme: z.object({
       frontend: z.enum(['default', 'classic']),
     }),
-    Notice: z.string().optional(),
     SystemName: z.string().min(1, {
       error: () => t('System name is required'),
     }),
@@ -139,49 +137,36 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('Frontend Theme')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    items={[
+                      { value: 'default', label: t('Default (New Frontend)') },
+                      {
+                        value: 'classic',
+                        label: t('Classic (Legacy Frontend)'),
+                      },
+                    ]}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className='w-full'>
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value='default'>
-                        {t('Default (New Frontend)')}
-                      </SelectItem>
-                      <SelectItem value='classic'>
-                        {t('Classic (Legacy Frontend)')}
-                      </SelectItem>
+                    <SelectContent alignItemWithTrigger={false}>
+                      <SelectGroup>
+                        <SelectItem value='default'>
+                          {t('Default (New Frontend)')}
+                        </SelectItem>
+                        <SelectItem value='classic'>
+                          {t('Classic (Legacy Frontend)')}
+                        </SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                   <FormDescription>
                     {t(
                       'Switch between the new frontend and the classic frontend. Changes take effect after page reload.'
-                    )}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='Notice'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('Notice')}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t(
-                        'Enter announcement content (supports Markdown & HTML)'
-                      )}
-                      rows={6}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t(
-                      'Announcement displayed to users (supports Markdown & HTML)'
                     )}
                   </FormDescription>
                   <FormMessage />

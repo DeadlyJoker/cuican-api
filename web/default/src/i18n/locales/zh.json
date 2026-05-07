@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "允许使用未配置价格的模型",
     "Allowed": "允许",
     "Allowed Origins": "允许的 Origins",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "允许的跨域来源（CORS），多个域名用逗号分隔。留空则允许所有来源。",
     "Allowed Ports": "允许的端口",
     "Already have an account?": "已有账户？",
     "Always matches (default tier).": "始终匹配（默认档位）。",

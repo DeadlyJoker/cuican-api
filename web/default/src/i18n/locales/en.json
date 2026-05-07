@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "Allow using models without price configuration",
     "Allowed": "Allowed",
     "Allowed Origins": "Allowed Origins",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.",
     "Allowed Ports": "Allowed Ports",
     "Already have an account?": "Already have an account?",
     "Always matches (default tier).": "Always matches (default tier).",

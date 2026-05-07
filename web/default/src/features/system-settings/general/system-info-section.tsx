@@ -35,6 +35,7 @@ const _systemInfoSchema = z.object({
   Notice: z.string().optional(),
   SystemName: z.string().min(1),
   ServerAddress: z.string().optional(),
+  AllowedOrigins: z.string().optional(),
   Logo: z.string().url().optional().or(z.literal('')),
   Footer: z.string().optional(),
   About: z.string().optional(),
@@ -68,6 +69,7 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
     Notice: normalizeValue(defaultValues.Notice),
     SystemName: normalizeValue(defaultValues.SystemName),
     ServerAddress: normalizeValue(defaultValues.ServerAddress),
+    AllowedOrigins: normalizeValue(defaultValues.AllowedOrigins),
     Logo: normalizeValue(defaultValues.Logo),
     Footer: normalizeValue(defaultValues.Footer),
     About: normalizeValue(defaultValues.About),
@@ -87,6 +89,7 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
       error: () => t('System name is required'),
     }),
     ServerAddress: z.string().optional(),
+    AllowedOrigins: z.string().optional(),
     Logo: z.string().url().optional().or(z.literal('')),
     Footer: z.string().optional(),
     About: z.string().optional(),
@@ -215,6 +218,28 @@ export function SystemInfoSection({ defaultValues }: SystemInfoSectionProps) {
                   <FormDescription>
                     {t(
                       'The public URL of your server, used for OAuth callbacks, webhooks, and other external integrations'
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='AllowedOrigins'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('Allowed Origins')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='https://example.com, https://app.example.com'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t(
+                      'Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.'
                     )}
                   </FormDescription>
                   <FormMessage />

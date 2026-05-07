@@ -36,6 +36,7 @@ export type GeneralSettings = {
   About: string
   HomePageContent: string
   ServerAddress: string
+  AllowedOrigins: string
   'legal.user_agreement': string
   'legal.privacy_policy': string
   QuotaForNewUser: number

@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "Разрешить использование моделей без настройки цен",
     "Allowed": "Разрешено",
     "Allowed Origins": "Разрешенные Origins",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "Список разрешённых источников для CORS, разделённых запятыми. Оставьте пустым, чтобы разрешить все источники.",
     "Allowed Ports": "Разрешенные порты",
     "Already have an account?": "Уже есть аккаунт?",
     "Always matches (default tier).": "Всегда совпадает (уровень по умолчанию).",

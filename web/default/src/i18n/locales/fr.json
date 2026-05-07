@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "Autoriser l'utilisation de modèles sans configuration de prix",
     "Allowed": "Autorisé",
     "Allowed Origins": "Origines autorisées",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "Liste d'origines autorisées pour CORS, séparées par des virgules. Laissez vide pour autoriser toutes les origines.",
     "Allowed Ports": "Ports autorisés",
     "Already have an account?": "Vous avez déjà un compte ?",
     "Always matches (default tier).": "Toujours appliqué (palier par défaut).",

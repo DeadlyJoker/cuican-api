@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "Cho phép sử dụng mô hình không có cấu hình giá",
     "Allowed": "Cho phép",
     "Allowed Origins": "Nguồn gốc được phép",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "Danh sách các nguồn gốc được phép cho CORS, phân tách bằng dấu phẩy. Để trống để cho phép tất cả nguồn gốc.",
     "Allowed Ports": "Cổng được phép",
     "Already have an account?": "Đã có tài khoản?",
     "Always matches (default tier).": "Luôn khớp (bậc mặc định).",

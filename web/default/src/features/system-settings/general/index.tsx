@@ -17,6 +17,7 @@ const defaultGeneralSettings: GeneralSettings = {
   About: '',
   HomePageContent: '',
   ServerAddress: '',
+  AllowedOrigins: '',
   'legal.user_agreement': '',
   'legal.privacy_policy': '',
   QuotaForNewUser: 0,

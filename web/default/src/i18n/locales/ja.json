@@ -254,6 +254,7 @@
     "Allow using models without price configuration": "価格設定なしでモデルの使用を許可",
     "Allowed": "許可",
     "Allowed Origins": "許可するオリジン",
+    "Comma-separated list of allowed origins for CORS. Leave empty to allow all origins.": "CORSで許可するオリジンをカンマ区切りで指定します。空欄の場合はすべてのオリジンを許可します。",
     "Allowed Ports": "許可するポート",
     "Already have an account?": "アカウントをお持ちの方？",
     "Always matches (default tier).": "常に一致（デフォルト ティア）。",

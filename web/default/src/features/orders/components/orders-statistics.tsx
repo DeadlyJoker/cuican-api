@@ -77,7 +77,7 @@ export function OrdersStatistics() {
 
   const trendSpec = {
     type: 'area',
-    data: [{ values: stats.revenue_trend || [] }],
+    data: [{ values: (stats.revenue_trend || []).map((d) => ({ ...d, date: String(d.date ?? '') })) }],
     xField: 'date',
     yField: 'revenue',
     point: { visible: true, size: 4 },
@@ -100,16 +100,12 @@ export function OrdersStatistics() {
 
   const pieMethodSpec = {
     type: 'pie',
-    data: [{ values: stats.revenue_by_method || [] }],
+    data: [{ values: (stats.revenue_by_method || []).map((d) => ({ ...d, method: String(d.method ?? '') })) }],
     valueField: 'revenue',
     categoryField: 'method',
     outerRadius: 0.8,
     innerRadius: 0.5,
-    label: {
-      visible: true,
-      position: 'outside',
-      formatMethod: (text: string | number) => String(text ?? ''),
-    },
+    label: { visible: true, position: 'outside' },
     tooltip: {
       mark: {
         content: [
@@ -123,16 +119,12 @@ export function OrdersStatistics() {
 
   const pieTypeSpec = {
     type: 'pie',
-    data: [{ values: stats.revenue_by_type || [] }],
+    data: [{ values: (stats.revenue_by_type || []).map((d) => ({ ...d, type: String(d.type ?? '') })) }],
     valueField: 'revenue',
     categoryField: 'type',
     outerRadius: 0.8,
     innerRadius: 0.5,
-    label: {
-      visible: true,
-      position: 'outside',
-      formatMethod: (text: string | number) => String(text ?? ''),
-    },
+    label: { visible: true, position: 'outside' },
     tooltip: {
       mark: {
         content: [
